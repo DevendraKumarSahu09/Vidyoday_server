@@ -5,12 +5,23 @@ import passport from "passport";
 
 const app = express();
 
-app.use(
-  cors({
-    origin: "http://localhost:5173",
-    credentials: true,
-  })
-);
+// app.use(
+//   cors({
+//     origin: "http://localhost:5173",
+//     credentials: true,
+//   })
+// );
+
+app.use((req, res, next) => {
+  res.header(“Access-Control-Allow-Origin”,“http://localhost:5173”);
+  res.header(“Access-Control-Allow-Methods”, “GET, POST, PUT, DELETE, OPTIONS”);
+  res.header(“Access-Control-Allow-Headers”, “Content-Type, Authorization”);
+  res.header(“Access-Control-Allow-Credentials”, true);
+  
+  console.log(“Request received:”, req.method, req.url);
+  
+  next();
+});
 
 app.use(express.json({ limit: "16kb" })); // to parse json in body
 app.use(express.urlencoded({ extended: true, limit: "16kb" })); // to parse url
