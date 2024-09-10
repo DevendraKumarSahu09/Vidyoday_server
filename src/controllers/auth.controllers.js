@@ -32,33 +32,55 @@ export const googleAuthCallback = passport.authenticate("google", {
   session: false,
 });
 
-export const handleGoogleLoginCallback = asyncHandler(async (req, res) => {
-  console.log("\n******** Inside handleGoogleLoginCallback function ********");
-  // console.log("User Google Info", req.user);
+// export const handleGoogleLoginCallback = asyncHandler(async (req, res) => {
+//   console.log("\n******** Inside handleGoogleLoginCallback function ********");
+//   // console.log("User Google Info", req.user);
 
+//   const existingUser = await User.findOne({ email: req.user._json.email });
+
+//   if (existingUser) {
+//     const jwtToken = generateJWTToken_username(existingUser);
+//     const expiryDate = new Date(Date.now() + 1 * 60 * 60 * 1000);
+//     res.cookie("accessToken", jwtToken, { httpOnly: true, expires: expiryDate, secure: false });
+//     return res.redirect(`http://localhost:5173/discover`);
+//   }
+
+//   let unregisteredUser = await UnRegisteredUser.findOne({ email: req.user._json.email });
+//   if (!unregisteredUser) {
+//     console.log("Creating new Unregistered User");
+//     unregisteredUser = await UnRegisteredUser.create({
+//       name: req.user._json.name,
+//       email: req.user._json.email,
+//       picture: req.user._json.picture,
+//     });
+//   }
+//   const jwtToken = generateJWTToken_email(unregisteredUser);
+//   const expiryDate = new Date(Date.now() + 0.5 * 60 * 60 * 1000);
+//   res.cookie("accessTokenRegistration", jwtToken, { httpOnly: true, expires: expiryDate, secure: false });
+//   return res.redirect("http://localhost:5173/register");
+// });
+
+export const handleGoogleLoginCallback = asyncHandler(async (req, res) => {
   const existingUser = await User.findOne({ email: req.user._json.email });
 
   if (existingUser) {
     const jwtToken = generateJWTToken_username(existingUser);
-    const expiryDate = new Date(Date.now() + 1 * 60 * 60 * 1000);
-    res.cookie("accessToken", jwtToken, { httpOnly: true, expires: expiryDate, secure: false });
-    return res.redirect(`http://localhost:5173/discover`);
+    return res.redirect(`http://localhost:5173/discover?token=${jwtToken}`);
   }
 
   let unregisteredUser = await UnRegisteredUser.findOne({ email: req.user._json.email });
   if (!unregisteredUser) {
-    console.log("Creating new Unregistered User");
     unregisteredUser = await UnRegisteredUser.create({
       name: req.user._json.name,
       email: req.user._json.email,
       picture: req.user._json.picture,
     });
   }
+
   const jwtToken = generateJWTToken_email(unregisteredUser);
-  const expiryDate = new Date(Date.now() + 0.5 * 60 * 60 * 1000);
-  res.cookie("accessTokenRegistration", jwtToken, { httpOnly: true, expires: expiryDate, secure: false });
-  return res.redirect("http://localhost:5173/register");
+  return res.redirect(`http://localhost:5173/register?token=${jwtToken}`);
 });
+
 
 export const handleLogout = (req, res) => {
   console.log("\n******** Inside handleLogout function ********");
