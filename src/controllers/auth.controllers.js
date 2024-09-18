@@ -15,7 +15,7 @@ passport.use(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: "/auth/google/callback",
+      callbackURL: "http://vidyoday-server.onrender.com/auth/google/callback",
     },
     async (accessToken, refreshToken, profile, done) => {
       done(null, profile);
@@ -28,7 +28,7 @@ export const googleAuthHandler = passport.authenticate("google", {
 });
 
 export const googleAuthCallback = passport.authenticate("google", {
-  failureRedirect: "http://localhost:5173/login",
+  failureRedirect: "https://vidyoday-client.vercel.app/login",
   session: false,
 });
 
@@ -65,7 +65,7 @@ export const handleGoogleLoginCallback = asyncHandler(async (req, res) => {
 
   if (existingUser) {
     const jwtToken = generateJWTToken_username(existingUser);
-    return res.redirect(`http://localhost:5173/discover?token=${jwtToken}`);
+    return res.redirect(`https://vidyoday-client.vercel.app/discover?token=${jwtToken}`);
   }
 
   let unregisteredUser = await UnRegisteredUser.findOne({ email: req.user._json.email });
@@ -78,7 +78,7 @@ export const handleGoogleLoginCallback = asyncHandler(async (req, res) => {
   }
 
   const jwtToken = generateJWTToken_email(unregisteredUser);
-  return res.redirect(`http://localhost:5173/register?token=${jwtToken}`);
+  return res.redirect(`https://vidyoday-client.vercel.app/register?token=${jwtToken}`);
 });
 
 
